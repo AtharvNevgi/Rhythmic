@@ -1,15 +1,49 @@
+import { useState } from "react";
 import { supabase } from "../lib/supabase";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const handleLogin = async () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
     const { error } = await supabase.auth.signInWithPassword({
-      email: "testuser@gmail.com",
-      password: "Test@1234",
+      email,
+      password,
     });
 
-    if (error) alert(error.message);
-    else alert("Logged in");
+    if (error) {
+      alert(error.message);
+    } else {
+      navigate("/dashboard");
+    }
   };
 
-  return <button onClick={handleLogin}>Login</button>;
+  return (
+    <form onSubmit={handleLogin} className="flex-col">
+      <h2>Login to Rhythmic</h2>
+      <div>
+        <input 
+          className="border-2 mr-2"
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <input
+          className="border-2"
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
+
+      <button className="bg-blue-500 p-2 mt-3 rounded-2xl text-2xl " type="submit">Login</button>
+    </form>
+  );
 }
